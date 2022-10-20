@@ -5,11 +5,6 @@ const AllStores = [
     autoIncrement: true,
     indexes: [
       {
-        name: "name",
-        keyPath: "name",
-        unique: false,
-      },
-      {
         name: "mobile",
         keyPath: "mobile",
         unique: true,
@@ -17,26 +12,6 @@ const AllStores = [
       {
         name: "email",
         keyPath: "email",
-        unique: false,
-      },
-      {
-        name: "pincode",
-        keyPath: "pincode",
-        unique: false,
-      },
-      {
-        name: "address",
-        keyPath: "address",
-        unique: false,
-      },
-      {
-        name: "gstin",
-        keyPath: "gstin",
-        unique: false,
-      },
-      {
-        name: "pan",
-        keyPath: "pan",
         unique: false,
       },
     ],
@@ -49,83 +24,16 @@ const AllStores = [
       {
         name: "invoiceNumber",
         keyPath: "invoiceNumber",
+        unique: true,
+      },
+      {
+        name: "date",
+        keyPath: "date",
         unique: false,
       },
       {
-        name: "invoiceDate",
-        keyPath: "invoiceDate",
-        unique: false,
-      },
-      {
-        name: "invoiceNotes",
-        keyPath: "invoiceNotes",
-        unique: false,
-      },
-      {
-        name: "invoiceTotal",
-        keyPath: "invoiceTotal",
-        unique: false,
-      },
-      {
-        name: "invoicePaid",
-        keyPath: "invoicePaid",
-        unique: false,
-      },
-      {
-        name: "invoiceDue",
-        keyPath: "invoiceDue",
-        unique: false,
-      },
-      {
-        name: "invoiceStatus",
-        keyPath: "invoiceStatus",
-        unique: false,
-      },
-      {
-        name: "invoiceCustomer",
-        keyPath: "invoiceCustomer",
-        unique: false,
-      },
-    ],
-  },
-  {
-    name: "products",
-    keyPath: "id",
-    autoIncrement: true,
-    indexes: [
-      {
-        name: "productName",
-        keyPath: "productName",
-        unique: false,
-      },
-      {
-        name: "productDescription",
-        keyPath: "productDescription",
-        unique: false,
-      },
-      {
-        name: "productPrice",
-        keyPath: "productPrice",
-        unique: false,
-      },
-      {
-        name: "productQuantity",
-        keyPath: "productQuantity",
-        unique: false,
-      },
-      {
-        name: "productDiscount",
-        keyPath: "productDiscount",
-        unique: false,
-      },
-      {
-        name: "productTotal",
-        keyPath: "productTotal",
-        unique: false,
-      },
-      {
-        name: "productInvoice",
-        keyPath: "productInvoice",
+        name: "customerId",
+        keyPath: "customerId",
         unique: false,
       },
     ],
@@ -160,16 +68,38 @@ export const connectDB = (f = () => {}) => {
 };
 
 export const addData = (storeName, data) => {
-  connectDB(function (db) {
-    var transaction = db.transaction(storeName, "readwrite");
-    var store = transaction.objectStore(storeName);
-    var request = store.add(data);
-    request.onsuccess = function (e) {
-      console.log("Data added successfully");
-    };
-    request.onerror = function (e) {
-      console.log("Error: ", e.target?.error?.message);
-    };
+  return new Promise((resolve, reject) => {
+    connectDB((db) => {
+      var transaction = db.transaction([storeName], "readwrite");
+      var objectStore = transaction.objectStore(storeName);
+      var request = objectStore.add(data);
+      request.onsuccess = function (event) {
+        data.id = event.target.result;
+        resolve(data);
+      };
+      request.onerror = function (err) {
+        reject(err);
+      };
+    });
+  });
+};
+
+export const updateData = (storeName, id, data) => {
+  return new Promise((resolve, reject) => {
+    connectDB(function (db) {
+      var transaction = db.transaction(storeName, "readwrite");
+      var store = transaction.objectStore(storeName);
+      data.id = id;
+      var request = store.put(data);
+      request.onsuccess = () => {
+        resolve(data);
+        console.log("Data updated successfully");
+      };
+      request.onerror = (e) => {
+        reject(e);
+        console.log("Error: ", e.target?.error?.message);
+      };
+    });
   });
 };
 
@@ -232,7 +162,8 @@ export const getByColumn = (storeName, column, value) => {
         store.openCursor().onsuccess = function (e) {
           var cursor = e.target.result;
           if (cursor) {
-            if (cursor.value[column] === value) {
+            // eslint-disable-next-line eqeqeq
+            if (cursor.value[column] == value) {
               rows.push(cursor.value);
             }
             cursor.continue();

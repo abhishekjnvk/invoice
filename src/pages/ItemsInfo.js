@@ -19,6 +19,8 @@ import {
   IconGripVertical,
   IconPercentage,
 } from "@tabler/icons";
+import { useEffect, useState } from "react";
+import { addInvoice, getInvoiceNumber } from "../utils/dbModel/invoice";
 
 const newItem = {
   name: "",
@@ -28,12 +30,37 @@ const newItem = {
   description: "",
   openMore: false,
 };
-function ItemsInfo() {
+
+function ItemsInfo({ invoiceNumber, setInvoiceNumber, customer }) {
+  const [paid, setPaid] = useState(0);
+
+  useEffect(() => {
+    getInvoiceNumber().then((res) => {
+      setInvoiceNumber(res);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const form = useForm({
     initialValues: {
       items: [newItem],
     },
   });
+
+  const total =
+    form.values.items
+      .reduce(
+        (acc, item) =>
+          acc +
+          (item.unit * item.rate -
+            (Number(item.discount || 0) / 100) * (item.unit * item.rate)),
+        0
+      )
+      .toFixed(2) || 0;
+
+  useEffect(() => {
+    setPaid(Number(total));
+  }, [total]);
 
   const removeItem = (index) => {
     let filteredItems = form.values.items.filter((item, i) => i !== index);
@@ -203,12 +230,14 @@ function ItemsInfo() {
                               : ""
                           }
                           value={
-                            form.values.items[index]?.unit *
-                              form.values.items[index]?.rate -
-                            (Number(form.values.items[index]?.discount || 0) /
-                              100) *
-                              (form.values.items[index]?.unit *
-                                form.values.items[index]?.rate)
+                            (
+                              form.values.items[index]?.unit *
+                                form.values.items[index]?.rate -
+                              (Number(form.values.items[index]?.discount || 0) /
+                                100) *
+                                (form.values.items[index]?.unit *
+                                  form.values.items[index]?.rate)
+                            ).toFixed(2) || 0
                           }
                         />
                       </Grid.Col>
@@ -224,8 +253,33 @@ function ItemsInfo() {
     </Draggable>
   ));
 
+  const handleGenerateInvoice = async () => {
+    let invoiceObj = {
+      invoiceNumber,
+      items: form.values.items,
+      total,
+      paid,
+      customerId: customer.id,
+      customerName: customer.name,
+    };
+    let data = await addInvoice(invoiceObj);
+    console.log(data);
+  };
   return (
     <Box sx={{ maxWidth: "80%" }} mx="auto">
+      <div className="row my-3">
+        <div className="col-lg-6 text-start">
+          Bill To:{" "}
+          <strong>
+            {" "}
+            {customer.name}({customer.mobile})
+          </strong>
+        </div>
+        <div className="col-lg-6 text-end">
+          Invoice Number: <strong> {invoiceNumber}</strong>
+        </div>
+      </div>
+
       <DragDropContext
         onDragEnd={({ destination, source }) => {
           if (
@@ -251,23 +305,26 @@ function ItemsInfo() {
           )}
         </Droppable>
       </DragDropContext>
-
       <Group position="center" mt="md">
         <Button onClick={handleAddNewItem}>Add Item</Button>
       </Group>
-
-      <Text align="right">
-        Total :
-        {form.values.items.reduce(
-          (acc, item) =>
-            acc +
-            (item.unit * item.rate -
-              (Number(item.discount || 0) / 100) * (item.unit * item.rate)),
-          0
-        )}
-      </Text>
-
-      <Button>Print</Button>
+      <div className="row justify-content-end">
+        <div className="col-lg-3 text-end">
+          Total:
+          <strong>{total}</strong>
+          <br />
+          <div className="text-start col-lg-6 float-end">
+            <NumberInput
+              hideControls
+              label="Total Paid"
+              value={paid}
+              onChange={(val) => setPaid(val)}
+            />
+          </div>
+        </div>
+      </div>
+      <Text align="right"></Text>
+      <Button onClick={handleGenerateInvoice}>Print</Button>
     </Box>
   );
 }

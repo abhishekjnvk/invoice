@@ -1,6 +1,14 @@
 //create customer object store
 
-import { addData, getByColumn, searchByWildCard } from "../indexedDbUtils";
+import {
+  addData,
+  getByColumn,
+  getById,
+  searchByWildCard,
+  updateData,
+} from "../indexedDbUtils";
+
+const storeName = "customers";
 
 export const addCustomer = async (customer) => {
   let {
@@ -30,20 +38,25 @@ export const addCustomer = async (customer) => {
     pincode,
   };
 
-  let prevData = await getByColumn("customers", "mobile", mobile);
+  let prevData = await getCustomerByMobile(mobile);
   if (!prevData.length) {
-    return addData("customers", customerData);
+    return addData(storeName, customerData);
   } else {
-    throw new Error("Mobile Already in use");
+    return updateData(storeName, prevData[0].id, customerData);
   }
 };
+
 // search customer by mobile number
 export const searchCustomer = async (mobile) => {
-  let customer = await searchByWildCard("customers", "mobile", mobile);
+  let customer = await searchByWildCard(storeName, "mobile", mobile);
   return customer;
 };
 
-// //get customer by mobile number
-// export const getCustomerByMobile = (db, mobile) => {
-//   return getDataByColumnValue(db, "customers", "mobile", mobile);
-// };
+//get customer by mobile number
+export const getCustomerByMobile = (mobile) => {
+  return getByColumn(storeName, "mobile", mobile);
+};
+
+export const getCustomerByID = (id) => {
+  return getById(storeName, id);
+};
