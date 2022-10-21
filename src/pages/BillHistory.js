@@ -22,10 +22,10 @@ const BillHistory = () => {
   };
 
   return (
-    <div className="container">
+    <div className="col-lg-8 mx-auto">
       <div className="col-lg-4 mx-auto py-3 row">
         <div className="col-lg-10">
-          <form autocomplete="off">
+          <form autoComplete="off">
             <TextInput
               value={invoiceNumberInput}
               placeholder="Enter Invoice Number"
@@ -58,7 +58,7 @@ const BillHistory = () => {
             <tbody>
               {allInvoices.slice(0, 100).map((invoice) => {
                 return (
-                  <tr>
+                  <tr key={`inv_${invoice.id}`}>
                     <td>
                       <Link to={`/bill/${invoice.invoiceNumber}`}>
                         {invoice.invoiceNumber}

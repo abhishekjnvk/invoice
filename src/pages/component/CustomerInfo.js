@@ -61,7 +61,10 @@ const CustomerInfo = ({ setStep, setCustomer }) => {
 
   return (
     <div className="col-lg-6 mx-auto px-3">
-      <form onSubmit={form.onSubmit(handleSubmit)} autocomplete="off">
+      <h5 className="text-muted text-center mb-3">
+        Enter Customer Details Before Generating Invoice
+      </h5>
+      <form onSubmit={form.onSubmit(handleSubmit)} autoComplete="off">
         <div className="row">
           <div className="col-lg-6">
             <NumberInput

@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "@mantine/form";
-import { TextInput, Button, Box, Textarea, Text } from "@mantine/core";
+import { TextInput, Button, Box, Textarea, Text, Select } from "@mantine/core";
 import { IconPlus, IconTrash } from "@tabler/icons";
+import { toast } from "react-toastify";
+import currencies from "./currency.json";
 
-const BusinessInfo = ({ setStep }) => {
+const BusinessInfo = ({ setBusinessInfo }) => {
   const form = useForm({
     initialValues: {
       name: "",
@@ -11,7 +13,9 @@ const BusinessInfo = ({ setStep }) => {
       mobile: "",
       address: "",
       website: "",
+      gst: "",
       terms: [],
+      currency: "₹",
     },
 
     validate: {
@@ -24,7 +28,7 @@ const BusinessInfo = ({ setStep }) => {
           ? value.length < 10
             ? "Mobile must have at least 10 numbers"
             : null
-          : null,
+          : "Mobile number is required",
       address: (value) => (value.length ? null : "Address Is Required"),
       website: (value) =>
         value.length
@@ -32,8 +36,25 @@ const BusinessInfo = ({ setStep }) => {
             ? null
             : "Invalid URL"
           : null,
+      gst: (value) =>
+        value.length
+          ? /^(\d{2}[A-Z]{5}\d{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[A-Z\d]{1})$/.test(
+              value
+            )
+            ? null // GSTIN
+            : "Invalid GSTIN"
+          : null,
+      currency: (value) => (value?.length ? null : "Currency is required"),
     },
   });
+
+  useEffect(() => {
+    let businessInfo = localStorage.getItem("businessInfo");
+    if (businessInfo) {
+      form.setValues(JSON.parse(businessInfo));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addNewTerm = () => {
     if (
@@ -61,44 +82,96 @@ const BusinessInfo = ({ setStep }) => {
     form.setFieldValue("terms", filteredTerms);
     let businessInfo = JSON.stringify(values);
     localStorage.setItem("businessInfo", businessInfo);
-    setStep(1);
+    setBusinessInfo?.(values);
+
+    toast.success("Saved !", {
+      position: toast.POSITION.BOTTOM_CENTER,
+      autoClose: 1000,
+    });
   };
 
   return (
-    <Box sx={{ maxWidth: 340 }} mx="auto">
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <TextInput
-          label="Business Name"
-          placeholder="Name"
-          {...form.getInputProps("name")}
-        />
-        <TextInput
-          mt="sm"
-          label="Email"
-          placeholder="Email"
-          {...form.getInputProps("email")}
-        />
-        <TextInput
-          mt="sm"
-          label="Mobile Number"
-          placeholder="Mobile Number"
-          pattern={
-            "^(\\+\\d{1,3}[- ]?)?\\d{10}$" // only allow numbers and + sign
-          }
-          {...form.getInputProps("mobile")}
-        />
+    <div className="col-lg-6 mx-auto">
+      <h5 className="text-muted text-center mb-3">Business Info Setup</h5>
+      <form onSubmit={form.onSubmit(handleSubmit)} autoComplete="off">
+        <div className="row">
+          <div className="col-lg-6">
+            <TextInput
+              label="Business Name"
+              placeholder="Name"
+              withAsterisk
+              {...form.getInputProps("name")}
+            />
+          </div>
+          <div className="col-lg-6">
+            <TextInput
+              label="Email"
+              placeholder="Email"
+              {...form.getInputProps("email")}
+            />
+          </div>
+          <div className="col-lg-6">
+            <TextInput
+              label="Mobile Number"
+              withAsterisk
+              placeholder="Mobile Number"
+              pattern={
+                "^(\\+\\d{1,3}[- ]?)?\\d{10}$" // only allow numbers and + sign
+              }
+              {...form.getInputProps("mobile")}
+            />
+          </div>
+          <div className="col-lg-6">
+            <TextInput
+              label="Business Website"
+              placeholder="Website"
+              {...form.getInputProps("website")}
+            />
+          </div>
+          <div className="col-lg-6">
+            <TextInput
+              label="GST Number"
+              placeholder="GST Number"
+              {...form.getInputProps("gst")}
+            />
+          </div>
+          <div className="col-lg-6">
+            <Select
+              maxDropdownHeight={280}
+              searchable
+              clearable
+              nothingFound="No options"
+              label="Invoice Currency"
+              withAsterisk
+              itemComponent={({ item, ...others }) => (
+                <Box {...others} padding="xs">
+                  <Text size="sm" weight={500}>
+                    {others.value}
+                  </Text>
+                  <Text size="xs" color="gray">
+                    {others.code}- {others.label}
+                  </Text>
+                </Box>
+              )}
+              filter={(value, item) =>
+                item.label.toLowerCase().includes(value.toLowerCase().trim()) ||
+                item.code.toLowerCase().includes(value.toLowerCase().trim())
+              }
+              placeholder="Invoice Currency"
+              data={currencies}
+              {...form.getInputProps("currency")}
+            />
+          </div>
+        </div>
+
         <Textarea
           mt="sm"
           label="Complete Business Address"
+          withAsterisk
           placeholder="Business Address"
           {...form.getInputProps("address")}
         />
-        <TextInput
-          mt="sm"
-          label="Business Website"
-          placeholder="Website"
-          {...form.getInputProps("website")}
-        />
+
         <div>
           <Text mt="md">Terms & Conditions</Text>
 
@@ -133,10 +206,10 @@ const BusinessInfo = ({ setStep }) => {
         <br />
 
         <Button type="submit" mt="sm">
-          Proceed
+          Save & Continue
         </Button>
       </form>
-    </Box>
+    </div>
   );
 };
 

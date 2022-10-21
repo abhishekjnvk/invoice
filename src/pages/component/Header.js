@@ -12,14 +12,7 @@ import {
   Code,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconLogout,
-  IconHeart,
-  IconSettings,
-  IconTrash,
-  IconSwitchHorizontal,
-  IconChevronDown,
-} from "@tabler/icons";
+import { IconSettings, IconTrash, IconChevronDown } from "@tabler/icons";
 import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
@@ -172,22 +165,27 @@ export function Header({ user, tabs }) {
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Label>Settings</Menu.Label>
-              <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>
-                Account settings
-              </Menu.Item>
-              <Menu.Item icon={<IconSwitchHorizontal size={14} stroke={1.5} />}>
-                Change account
-              </Menu.Item>
-              <Menu.Item icon={<IconLogout size={14} stroke={1.5} />}>
-                Logout
-              </Menu.Item>
+              <Link to="/setting">
+                <Menu.Item
+                  color="blue"
+                  icon={<IconSettings size={14} stroke={1.5} />}
+                >
+                  Settings
+                </Menu.Item>
+              </Link>
               <Menu.Divider />
-              <Menu.Label>Danger zone</Menu.Label>
+              <Menu.Label>Import/Export</Menu.Label>
               <Menu.Item
-                color="red"
+                color="blue"
                 icon={<IconTrash size={14} stroke={1.5} />}
               >
-                Delete account
+                Export Data (Coming Soon)
+              </Menu.Item>
+              <Menu.Item
+                color="blue"
+                icon={<IconTrash size={14} stroke={1.5} />}
+              >
+                Backup to GDrive (Coming Soon)
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>

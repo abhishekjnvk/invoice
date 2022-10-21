@@ -8,13 +8,13 @@ import {
   ActionIcon,
   Text,
   NativeSelect,
+  CloseButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   IconCaretDown,
   IconCaretUp,
-  IconCurrencyRupee,
   IconGripVertical,
   IconTrash,
 } from "@tabler/icons";
@@ -35,11 +35,16 @@ const newItem = {
 function ItemsInfo({ invoiceNumber, setInvoiceNumber, customer }) {
   const [paid, setPaid] = useState(0);
   const navigate = useNavigate();
+  const [businessInfo, setBusinessInfo] = useState({});
 
   useEffect(() => {
     getInvoiceNumber().then((res) => {
       setInvoiceNumber(res);
     });
+    let businessInfo = localStorage.getItem("businessInfo");
+    if (businessInfo) {
+      setBusinessInfo(JSON.parse(businessInfo));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -54,9 +59,12 @@ function ItemsInfo({ invoiceNumber, setInvoiceNumber, customer }) {
       .reduce(
         (acc, item) =>
           acc +
-          (item.unit * item.rate -
+          ((item.unit || 0) * (item.rate || 0) -
             (item.discountType === 1
-              ? Number(((item.discount || 0) * item.unit * item.rate) / 100)
+              ? Number(
+                  ((item.discount || 0) * (item.unit || 0) * (item.rate || 0)) /
+                    100
+                )
               : Number(item.discount || 0))),
 
         0
@@ -166,7 +174,7 @@ function ItemsInfo({ invoiceNumber, setInvoiceNumber, customer }) {
                       size="xs"
                       placeholder="Rate Per Unit"
                       hideControls
-                      icon={<IconCurrencyRupee size={18} />}
+                      icon={<>{businessInfo.currency}</>}
                       formatter={(value) =>
                         !Number.isNaN(parseFloat(value))
                           ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -220,7 +228,7 @@ function ItemsInfo({ invoiceNumber, setInvoiceNumber, customer }) {
                             }}
                             data={[
                               { value: 1, label: "%" },
-                              { value: 2, label: "₹" },
+                              { value: 2, label: businessInfo?.currency || "" },
                             ]}
                             size="xs"
                           />
@@ -235,11 +243,11 @@ function ItemsInfo({ invoiceNumber, setInvoiceNumber, customer }) {
               <div className="col-md-2 text-end pt-4">
                 <small>
                   {(
-                    form.values.items[index].rate *
-                      form.values.items[index].unit -
+                    (form.values.items[index].rate || 0) *
+                      (form.values.items[index].unit || 0) -
                     (form.values.items[index].discountType === 1
-                      ? (form.values.items[index].rate *
-                          form.values.items[index].unit *
+                      ? ((form.values.items[index].rate || 0) *
+                          (form.values.items[index].unit || 0) *
                           form.values.items[index].discount || 0) / 100
                       : form.values.items[index].discount)
                   ).toFixed(2)}
@@ -301,9 +309,27 @@ function ItemsInfo({ invoiceNumber, setInvoiceNumber, customer }) {
           </strong>
         </div>
         <div className="col-lg-6 text-end">
-          Invoice Number: <strong> {invoiceNumber}</strong>
+          Invoice Number: <strong> {invoiceNumber}</strong>{" "}
+          <small className="ms-3">
+            <CloseButton
+              className="float-end"
+              color="red"
+              onClick={() => {
+                if (
+                  window.confirm(
+                    "All filled data will be lost. Are you sure you want to cancel?"
+                  )
+                ) {
+                  window.location.reload();
+                }
+              }}
+              about="Cancel"
+            />
+          </small>
         </div>
       </div>
+      <hr />
+      <h6 className="text-muted text-center">Items</h6>
 
       <DragDropContext
         onDragEnd={({ destination, source }) => {
@@ -325,7 +351,7 @@ function ItemsInfo({ invoiceNumber, setInvoiceNumber, customer }) {
         <Droppable droppableId="dnd-list" direction="vertical">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              <form autocomplete="off">{fields}</form>
+              <form autoComplete="off">{fields}</form>
             </div>
           )}
         </Droppable>

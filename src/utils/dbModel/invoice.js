@@ -14,8 +14,10 @@ export const addInvoice = async (invoice) => {
     customerName = "",
   } = invoice;
 
+  paid = parseFloat(paid).toFixed(2);
   if (customerId && invoiceNumber && total && paid && items.length) {
-    let due = total - paid;
+    let due = (parseFloat(total) - parseFloat(paid)).toFixed(2);
+
     let invoiceObj = {
       customerId,
       invoiceNumber,
