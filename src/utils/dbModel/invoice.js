@@ -11,6 +11,7 @@ export const addInvoice = async (invoice) => {
     paid,
     items = [],
     status = "paid",
+    customerName = "",
   } = invoice;
 
   if (customerId && invoiceNumber && total && paid && items.length) {
@@ -25,6 +26,7 @@ export const addInvoice = async (invoice) => {
       due,
       status,
       items,
+      customerName,
     };
 
     return addData(storeName, invoiceObj);

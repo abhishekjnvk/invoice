@@ -3,7 +3,7 @@ import { useForm } from "@mantine/form";
 import { TextInput, Button, Box, Textarea, Text } from "@mantine/core";
 import { IconPlus, IconTrash } from "@tabler/icons";
 
-const BusinessInfo = ({setStep}) => {
+const BusinessInfo = ({ setStep }) => {
   const form = useForm({
     initialValues: {
       name: "",

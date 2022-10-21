@@ -1,8 +1,12 @@
-import React, { useEffect } from "react";
+import { TextInput, Button } from "@mantine/core";
+import React, { useEffect, useState } from "react";
 import { getAllInvoices } from "../utils/dbModel/invoice";
+import { Link, useNavigate } from "react-router-dom";
 
 const BillHistory = () => {
-  const [allInvoices, setAllInvoices] = React.useState([]);
+  const [allInvoices, setAllInvoices] = useState([]);
+  const [invoiceNumberInput, setInvoiceNumberInput] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllInvoices = async () => {
@@ -13,11 +17,33 @@ const BillHistory = () => {
     fetchAllInvoices();
   }, []);
 
-  return (
-    <div className="col-lg-8 border shadow mt-4 p-3 mx-auto">
-      <h2 className="text-center">Bill History</h2>
+  const handleGetInvoice = () => {
+    navigate(`/bill/${invoiceNumberInput.trim()}`);
+  };
 
-      <div className="col-lg-12 mx-auto py-3 row mb-4">
+  return (
+    <div className="container">
+      <div className="col-lg-4 mx-auto py-3 row">
+        <div className="col-lg-10">
+          <form autocomplete="off">
+            <TextInput
+              value={invoiceNumberInput}
+              placeholder="Enter Invoice Number"
+              onChange={(e) => setInvoiceNumberInput(e.target.value)}
+            />
+          </form>
+        </div>
+        <div className="col-lg-2">
+          <Button
+            onClick={handleGetInvoice}
+            disabled={invoiceNumberInput.trim().length === 0}
+          >
+            Get Invoice
+          </Button>
+        </div>
+      </div>
+      <h5 className="text-center">Bill History</h5>
+      <div className="col-lg-12 mx-auto row mb-4">
         {allInvoices.length > 0 && (
           <table className="table table-striped">
             <thead>
@@ -33,7 +59,11 @@ const BillHistory = () => {
               {allInvoices.slice(0, 100).map((invoice) => {
                 return (
                   <tr>
-                    <td>{invoice.invoiceNumber}</td>
+                    <td>
+                      <Link to={`/bill/${invoice.invoiceNumber}`}>
+                        {invoice.invoiceNumber}
+                      </Link>
+                    </td>
                     <td>{invoice.customerName}</td>
                     <td>{invoice.date}</td>
                     <td>{invoice.total}</td>

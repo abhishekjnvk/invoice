@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "@mantine/form";
 import { TextInput, Button, Textarea, NumberInput } from "@mantine/core";
-import { addCustomer, getCustomerByMobile } from "../utils/dbModel/customer";
+import { addCustomer, getCustomerByMobile } from "../../utils/dbModel/customer";
 let intVal = {
   name: "",
   email: "",
@@ -61,7 +61,7 @@ const CustomerInfo = ({ setStep, setCustomer }) => {
 
   return (
     <div className="col-lg-6 mx-auto px-3">
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <form onSubmit={form.onSubmit(handleSubmit)} autocomplete="off">
         <div className="row">
           <div className="col-lg-6">
             <NumberInput

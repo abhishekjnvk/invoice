@@ -1,52 +1,62 @@
-import { useEffect, useState } from "react";
-import CustomerInfo from "./pages/CustomerInfo";
 import BusinessInfo from "./pages/BusinessInfo";
-import ItemsInfo from "./pages/ItemsInfo";
 import "bootstrap/dist/css/bootstrap.min.css";
 import BillReprint from "./pages/BillReprint";
 import BillHistory from "./pages/BillHistory";
+import { AuthPage } from "./pages/AuthPage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import GenerateInvoice from "./pages/GenerateInvoice";
+import { Header } from "./pages/component/Header";
 
 function App() {
-  const [step, setStep] = useState(0);
-  const [invoiceNumber, setInvoiceNumber] = useState("");
-  const [customer, setCustomer] = useState({});
+  const links = [
+    {
+      label: "Generate Bill",
+      route: "/generate-bill",
+      component: <GenerateInvoice />,
+      sidebar: true,
+    },
+    {
+      label: "Register Business",
+      route: "/register-business",
+      component: <BusinessInfo />,
+      sidebar: false,
+    },
+    {
+      label: "Bill Reprint",
+      route: "/bill/:invoiceNumber",
+      component: <BillReprint />,
+      sidebar: false,
+    },
+    {
+      label: "Bill History",
+      route: "/bill-history",
+      component: <BillHistory />,
+      sidebar: true,
+    },
+    {
+      label: "Auth",
+      route: "/auth",
+      component: <AuthPage />,
+      sidebar: false,
+    },
+  ];
 
-  useEffect(() => {
-    let businessInfo = localStorage.getItem("businessInfo");
-    if (businessInfo) {
-      setStep(1);
-    }
-    // this will redirect the use to invoice steps if Invoice bussiness info exists
-    let clientInfo = localStorage.getItem("clientInfo");
-    if (clientInfo) {
-      setStep(2);
-    }
-  }, []);
   return (
     <div className="App">
-      <>
-        {step === 0 && <BusinessInfo setStep={setStep} />}
-
-        {step === 1 && (
-          <>
-            <CustomerInfo
-              setStep={setStep}
-              customer={customer}
-              setCustomer={setCustomer}
-            />
-            <BillReprint />
-            <BillHistory />
-          </>
-        )}
-
-        {step === 2 && (
-          <ItemsInfo
-            customer={customer}
-            invoiceNumber={invoiceNumber}
-            setInvoiceNumber={setInvoiceNumber}
-          />
-        )}
-      </>
+      <Router>
+        <Header tabs={links.filter((e) => e.sidebar === true)} user="" />
+        <Routes>
+          {links.map((link) => {
+            return (
+              <Route
+                key={link.route}
+                path={link.route}
+                element={link.component}
+              />
+            );
+          })}
+        </Routes>
+      </Router>
     </div>
   );
 }

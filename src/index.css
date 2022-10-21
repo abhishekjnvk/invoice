@@ -16,3 +16,9 @@ hr {
   font-weight: 700;
   color: rgb(131, 129, 129);
 }
+
+select {
+  border: none;
+  /* outline: none; */
+  scroll-behavior: smooth;
+}
