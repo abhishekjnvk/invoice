@@ -168,9 +168,9 @@ const BillReprint = ({ defaultData = null, ...props }) => {
           <Text align="right" className="text-muted">
             Total: {businessInfo.currency} {data.total}
             <br />
-            Paid: {businessInfo.currency} {data.paid.toFixed(2)}
+            Paid: {businessInfo.currency} {data.paid}
             <br />
-            Due: {businessInfo.currency} {data.due.toFixed(2)}
+            Due: {businessInfo.currency} {data.due}
             <br />
           </Text>
         </>
