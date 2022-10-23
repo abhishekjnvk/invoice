@@ -1,4 +1,5 @@
 import { Text, Paper, Button } from "@mantine/core";
+
 import { GoogleIcon } from "../icons";
 
 export function AuthPage(props) {

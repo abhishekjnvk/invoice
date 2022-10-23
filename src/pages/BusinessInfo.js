@@ -3,6 +3,7 @@ import { useForm } from "@mantine/form";
 import { TextInput, Button, Box, Textarea, Text, Select } from "@mantine/core";
 import { IconPlus, IconTrash } from "@tabler/icons";
 import { toast } from "react-toastify";
+
 import currencies from "./currency.json";
 
 const BusinessInfo = ({ setBusinessInfo }) => {

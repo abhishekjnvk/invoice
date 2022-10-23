@@ -1,7 +1,9 @@
 import React from "react";
 import { useForm } from "@mantine/form";
 import { TextInput, Button, Textarea, NumberInput } from "@mantine/core";
+
 import { addCustomer, getCustomerByMobile } from "../../utils/dbModel/customer";
+
 let intVal = {
   name: "",
   email: "",

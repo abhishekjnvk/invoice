@@ -93,7 +93,6 @@ export const updateData = (storeName, id, data) => {
       var request = store.put(data);
       request.onsuccess = () => {
         resolve(data);
-        console.log("Data updated successfully");
       };
       request.onerror = (e) => {
         reject(e);

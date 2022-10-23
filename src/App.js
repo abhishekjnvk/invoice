@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import Dashboard from "./Dashboard";
-import BusinessInfo from "./pages/BusinessInfo";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import Dashboard from "./Dashboard";
+import BusinessInfo from "./pages/BusinessInfo";
 
 const App = () => {
   const [businessInfo, setBusinessInfo] = React.useState({});

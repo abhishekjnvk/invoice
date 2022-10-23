@@ -1,7 +1,8 @@
-import { TextInput, Button } from "@mantine/core";
 import React, { useEffect, useState } from "react";
-import { getAllInvoices } from "../utils/dbModel/invoice";
 import { Link, useNavigate } from "react-router-dom";
+import { TextInput, Button } from "@mantine/core";
+
+import { getAllInvoices } from "../utils/dbModel/invoice";
 
 const BillHistory = () => {
   const [allInvoices, setAllInvoices] = useState([]);

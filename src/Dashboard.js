@@ -1,8 +1,9 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import BillReprint from "./pages/BillReprint";
 import BillHistory from "./pages/BillHistory";
 import { AuthPage } from "./pages/AuthPage";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import GenerateInvoice from "./pages/GenerateInvoice";
 import { Header } from "./pages/component/Header";
 import BusinessInfo from "./pages/BusinessInfo";

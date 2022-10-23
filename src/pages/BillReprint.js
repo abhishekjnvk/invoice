@@ -1,14 +1,21 @@
 import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { Button, Text } from "@mantine/core";
+import { toast } from "react-toastify";
+import { IconDownload, IconExternalLink, IconPrinter } from "@tabler/icons";
+import pdfMake from "pdfmake/build/pdfmake";
+import pdfFonts from "pdfmake/build/vfs_fonts";
+
+import { invoiceTemplate1 } from "../utils/invoiceTemplate";
 import { getCustomerByID } from "../utils/dbModel/customer";
 import { getInvoiceByNumber } from "../utils/dbModel/invoice";
 import { toTitleCase } from "../utils/helper";
-import { useParams } from "react-router-dom";
-import { Text } from "@mantine/core";
+
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const BillReprint = ({ defaultData = null, ...props }) => {
   let { invoiceNumber } = useParams();
 
-  // const [invoiceNumber, setInvoiceNumber] = React.useState("");
   const [data, setData] = React.useState(defaultData);
   const [customerData, setCustomerData] = React.useState("");
   const [businessInfo, setBusinessInfo] = React.useState("");
@@ -46,9 +53,53 @@ const BillReprint = ({ defaultData = null, ...props }) => {
     }
   }, [defaultData, invoiceNumber]);
 
+  const handlePrint = (type = "open") => {
+    if (data && businessInfo && customerData) {
+      let InvData = invoiceTemplate1(customerData, businessInfo, data);
+      if (type === "open") {
+        pdfMake.createPdf(InvData).open();
+      }
+      if (type === "download") {
+        pdfMake
+          .createPdf(InvData)
+          .download(`Invoice-${data.invoiceNumber}.pdf`);
+      }
+      if (type === "print") {
+        pdfMake.createPdf(InvData).print();
+      }
+    } else {
+      toast("No data found");
+    }
+  };
+
   return (
     <div className="col-lg-8 mt-4 p-3 mx-auto">
       {error && <div className="text-center py-5 text-danger">{error}</div>}
+
+      {data && customerData && businessInfo && (
+        <>
+          <Button
+            className="float-end mx-2"
+            onClick={handlePrint.bind(this, "print")}
+          >
+            <IconPrinter />
+          </Button>
+          <Button
+            className="float-end mx-2"
+            onClick={handlePrint.bind(this, "download")}
+          >
+            <IconDownload />
+          </Button>
+
+          <Button
+            className="float-end mx-2"
+            onClick={handlePrint.bind(this, "open")}
+          >
+            <IconExternalLink />
+          </Button>
+        </>
+      )}
+      <h5 className="text-center text-uppercase mb-5">Invoice</h5>
 
       {data && (
         <>
@@ -165,6 +216,7 @@ const BillReprint = ({ defaultData = null, ...props }) => {
               })}
             </tbody>
           </table>
+
           <Text align="right" className="text-muted">
             Total: {businessInfo.currency} {data.total}
             <br />

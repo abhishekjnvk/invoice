@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Group,
   TextInput,
@@ -18,9 +19,9 @@ import {
   IconGripVertical,
   IconTrash,
 } from "@tabler/icons";
-import { useEffect, useState } from "react";
-import { addInvoice, getInvoiceNumber } from "../../utils/dbModel/invoice";
 import { useNavigate } from "react-router-dom";
+
+import { addInvoice, getInvoiceNumber } from "../../utils/dbModel/invoice";
 
 const newItem = {
   name: "",

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   createStyles,
   Container,
@@ -13,7 +14,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSettings, IconTrash, IconChevronDown } from "@tabler/icons";
-import { Link } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -177,12 +177,14 @@ export function Header({ user, tabs }) {
               <Menu.Label>Import/Export</Menu.Label>
               <Menu.Item
                 color="blue"
+                disabled
                 icon={<IconTrash size={14} stroke={1.5} />}
               >
                 Export Data (Coming Soon)
               </Menu.Item>
               <Menu.Item
                 color="blue"
+                disabled
                 icon={<IconTrash size={14} stroke={1.5} />}
               >
                 Backup to GDrive (Coming Soon)
