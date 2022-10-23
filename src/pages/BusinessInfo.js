@@ -1,6 +1,14 @@
 import React, { useEffect } from "react";
 import { useForm } from "@mantine/form";
-import { TextInput, Button, Box, Textarea, Text, Select } from "@mantine/core";
+import {
+  TextInput,
+  Button,
+  Box,
+  Textarea,
+  Text,
+  Select,
+  FileButton,
+} from "@mantine/core";
 import { IconPlus, IconTrash } from "@tabler/icons";
 import { toast } from "react-toastify";
 
@@ -173,29 +181,74 @@ const BusinessInfo = ({ setBusinessInfo }) => {
           {...form.getInputProps("address")}
         />
 
+        <div className="mt-3 text-center">
+          <h6>
+            <span className="text-muted">Logo</span>
+          </h6>
+          {form.values.logo && (
+            <div>
+              <img
+                src={form.values.logo}
+                alt="logo"
+                style={{ width: "100px", height: "auto" }}
+              />
+            </div>
+          )}
+          <FileButton
+            onChange={(newFile) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(newFile);
+              reader.onload = () => {
+                form.setFieldValue("logo", reader.result);
+              };
+            }}
+            accept="image/png,image/jpeg"
+          >
+            {(props) => (
+              <>
+                {form.values.logo ? (
+                  <span className="mx-3">
+                    <IconTrash
+                      size={18}
+                      className="hand-pointer text-danger"
+                      onClick={() => {
+                        form.setFieldValue("logo", null);
+                      }}
+                    />
+                  </span>
+                ) : (
+                  <>
+                    <Button {...props}>Select Logo</Button>
+                    <div>
+                      <small>(100px*100px)</small>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+          </FileButton>
+        </div>
+
         <div>
           <Text mt="md">Terms & Conditions</Text>
-
           {form.values.terms.map((_, index) => (
-            <>
-              <Textarea
-                key={`term_${index}`}
-                placeholder="Add your Bill Term Here"
-                mt="xs"
-                autosize
-                minRows={1}
-                maxRows={2}
-                {...form.getInputProps(`terms.${index}`)}
-                rightSection={
-                  <IconTrash
-                    color="red"
-                    size={20}
-                    className="hand-pointer"
-                    onClick={() => removeTerm(index)}
-                  />
-                }
-              />
-            </>
+            <Textarea
+              key={`term_${index}`}
+              placeholder="Add your Bill Term Here"
+              mt="xs"
+              autosize
+              minRows={1}
+              maxRows={2}
+              {...form.getInputProps(`terms.${index}`)}
+              rightSection={
+                <IconTrash
+                  color="red"
+                  size={20}
+                  className="hand-pointer"
+                  onClick={() => removeTerm(index)}
+                />
+              }
+            />
           ))}
 
           <Button mt="xs" color="dark" size="xs" onClick={addNewTerm}>

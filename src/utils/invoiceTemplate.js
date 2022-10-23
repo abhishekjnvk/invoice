@@ -86,23 +86,29 @@ export const invoiceTemplate1 = (client, business, invoice) => {
         color: "#047886",
       },
       {
-        text: "INVOICE",
-        fontSize: 16,
-        alignment: "center",
-        decoration: "underline",
-        color: "skyblue",
-      },
-      {
         columns: [
           [
-            {
-              text: `Date: ${invoice.date}`,
-              bold: true,
-            },
+            business.logo
+              ? {
+                  image: business.logo,
+                  width: 80,
+                  height: 80,
+                }
+              : {},
           ],
           [
             {
+              text: `INVOICE`,
+              bold: true,
+              alignment: "right",
+            },
+            {
               text: `Bill No : ${invoice.invoiceNumber}`,
+              bold: true,
+              alignment: "right",
+            },
+            {
+              text: `Date: ${invoice.date}`,
               bold: true,
               alignment: "right",
             },
