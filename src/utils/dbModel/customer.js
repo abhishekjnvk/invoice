@@ -2,6 +2,7 @@
 
 import {
   addData,
+  getAllData,
   getByColumn,
   getById,
   searchByWildCard,
@@ -59,4 +60,15 @@ export const getCustomerByMobile = (mobile) => {
 
 export const getCustomerByID = (id) => {
   return getById(storeName, id);
+};
+
+export const exportCustomers = async () => {
+  let customers = await getAllData(storeName);
+  let csv = "Name,Mobile,Email,Address,GSTIN,PAN,City,State,Pincode";
+  customers.forEach((customer) => {
+    csv += `${customer.name},${customer.mobile},${customer.email},${customer.address},${customer.gstin},${customer.pan},${customer.city},${customer.state},${customer.pincode}
+`;
+  });
+
+  return csv;
 };

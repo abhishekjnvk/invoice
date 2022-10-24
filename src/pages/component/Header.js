@@ -11,9 +11,17 @@ import {
   Tabs,
   Burger,
   Code,
+  Tooltip,
+  Button,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconSettings, IconTrash, IconChevronDown } from "@tabler/icons";
+import {
+  IconSettings,
+  IconTrash,
+  IconChevronDown,
+  IconRefresh,
+  IconDatabaseExport,
+} from "@tabler/icons";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -121,8 +129,35 @@ export function Header({ user, tabs }) {
     <div className={classes.header}>
       <Container className={classes.mainSection}>
         <Group position="apart">
-          <Code color="blue">Invoice Generator</Code>
-
+          <div>
+            <Code color="blue">Invoice Generator</Code>
+            <IconRefresh
+              className="mx-3 hand-pointer rotate"
+              color="white"
+              size={20}
+              stroke={2}
+              rotate={true}
+            />
+            <Tooltip
+              label="Export Data"
+              color="gray"
+              position="right"
+              withArrow
+            >
+              <Button
+                size="xs"
+                className="p-0"
+                variant="filled"
+                onClick={() => {}}
+              >
+                <IconDatabaseExport
+                  className="mx-1 hand-pointer"
+                  title="Export"
+                  size={16}
+                />
+              </Button>
+            </Tooltip>
+          </div>
           <Burger
             opened={opened}
             onClick={toggle}
@@ -178,9 +213,9 @@ export function Header({ user, tabs }) {
               <Menu.Item
                 color="blue"
                 disabled
-                icon={<IconTrash size={14} stroke={1.5} />}
+                icon={<IconRefresh size={14} stroke={1.5} />}
               >
-                Export Data (Coming Soon)
+                Sync data
               </Menu.Item>
               <Menu.Item
                 color="blue"

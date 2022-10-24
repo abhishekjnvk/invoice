@@ -62,3 +62,15 @@ export const getInvoiceByNumber = (invoiceNumber) => {
 export const getAllInvoices = async () => {
   return getAllData(storeName);
 };
+
+export const exportInvoice = async () => {
+  let invoices = await getAllInvoices();
+  let data = invoices.map((invoice) => {
+    let { items, ...rest } = invoice;
+    return {
+      ...rest,
+      items: items.map((item) => item.name).join(", "),
+    };
+  });
+  return data;
+};
