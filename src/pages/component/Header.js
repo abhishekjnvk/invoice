@@ -22,6 +22,8 @@ import {
   IconRefresh,
   IconDatabaseExport,
 } from "@tabler/icons";
+import { getAllCustomers } from "../../utils/dbModel/customer";
+import { getAllInvoices } from "../../utils/dbModel/invoice";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -125,6 +127,52 @@ export function Header({ user, tabs }) {
     </Link>
   ));
 
+  const exportData = async () => {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    let allCustomers = await getAllCustomers();
+    allCustomers.forEach((rowArray, index) => {
+      if (index === 0) {
+        csvContent += Object.keys(rowArray).join(",") + "\n";
+      }
+      let value = Object.values(rowArray).join(",");
+      csvContent += value + "\n";
+    });
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute(
+      "download",
+      `customers_${new Date().toLocaleDateString()}.csv`
+    );
+    document.body.appendChild(link); // Required for FF
+
+    link.click();
+
+    // export invoice data to csv
+    let csvContentInvoice = "data:text/csv;charset=utf-8;";
+    let allInvoices = await getAllInvoices();
+
+    allInvoices.forEach((rowArray, index) => {
+      if (index === 0) {
+        csvContentInvoice += Object.keys(rowArray).join(";") + "\n";
+      }
+      rowArray.items = JSON.stringify(rowArray.items);
+      let value = Object.values(rowArray).join(";");
+      csvContentInvoice += value + "\n";
+    });
+
+    var encodedUri2 = encodeURI(csvContentInvoice);
+    var link2 = document.createElement("a");
+    link2.setAttribute("href", encodedUri2);
+    link2.setAttribute(
+      "download",
+      `invoices_${new Date().toLocaleDateString()}.csv`
+    );
+    document.body.appendChild(link2);
+
+    link2.click();
+  };
+
   return (
     <div className={classes.header}>
       <Container className={classes.mainSection}>
@@ -136,7 +184,7 @@ export function Header({ user, tabs }) {
               color="white"
               size={20}
               stroke={2}
-              rotate={true}
+              rotate={180}
             />
             <Tooltip
               label="Export Data"
@@ -148,7 +196,7 @@ export function Header({ user, tabs }) {
                 size="xs"
                 className="p-0"
                 variant="filled"
-                onClick={() => {}}
+                onClick={exportData}
               >
                 <IconDatabaseExport
                   className="mx-1 hand-pointer"
