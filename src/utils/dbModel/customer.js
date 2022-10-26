@@ -2,6 +2,7 @@
 
 import {
   addData,
+  getAllData,
   getByColumn,
   getById,
   searchByWildCard,
@@ -59,4 +60,8 @@ export const getCustomerByMobile = (mobile) => {
 
 export const getCustomerByID = (id) => {
   return getById(storeName, id);
+};
+
+export const getAllCustomers = () => {
+  return getAllData(storeName);
 };
