@@ -100,7 +100,7 @@ const BusinessInfo = ({ setBusinessInfo }) => {
   };
 
   return (
-    <div className="col-lg-6 mx-auto">
+    <div className="col-lg-6 mx-auto py-3">
       <h5 className="text-muted text-center mb-3">Business Info Setup</h5>
       <form onSubmit={form.onSubmit(handleSubmit)} autoComplete="off">
         <div className="row">
@@ -231,6 +231,7 @@ const BusinessInfo = ({ setBusinessInfo }) => {
 
         <div>
           <Text mt="md">Terms & Conditions</Text>
+          <small>terms and conditions will be printed on the bill</small><br/>
           {form.values.terms.map((_, index) => (
             <Textarea
               key={`term_${index}`}
