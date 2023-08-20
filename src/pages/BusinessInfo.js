@@ -260,9 +260,11 @@ const BusinessInfo = ({ setBusinessInfo }) => {
 
         <br />
 
+<div className="text-end">
         <Button type="submit" mt="sm">
           Save & Continue
         </Button>
+        </div>
       </form>
     </div>
   );
